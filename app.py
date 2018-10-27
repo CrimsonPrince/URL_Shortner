@@ -1,11 +1,11 @@
-from flask import Flask, render_template, jsonify, request
 import hashlib
-import os
+import sys
+import SQLalchemy
 
 def shorten(input):
 
 	hash = hashlib.md5(input.encode())
-	print(hash.hexdigits())
+	print(hash.hexdigest()[:8])
 
 	return(hash)
 
@@ -27,6 +27,5 @@ def main():
 	shortenurl = shorten(url)
 
 
-if name = '__main__':
-	app = Flask(__name__)
+if __name__ == '__main__':
 	main()
