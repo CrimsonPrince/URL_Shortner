@@ -1,9 +1,9 @@
 import hashlib
 import sys
-from flask_sqlalchemy import SQLAlchemy
-import * from model
+import sqlite3
 
-db = SQLAlchemy()
+db = sqlite3.connect('data/db')
+crusor = db.crusor()
 
 def shorten(input):
 
@@ -27,9 +27,11 @@ def main():
 		print("Too many arguments submitted please submit an argument in the form of the direct link to the file")
 		sys.exit(2)
 
-	hashedurl = shorten(url)
+	hashedUrl = shorten(url)
+	switch = insert(hashedUrl)
 
 def insert(hashed):
+
 
 
 
