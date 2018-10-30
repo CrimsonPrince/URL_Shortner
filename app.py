@@ -25,25 +25,25 @@ def insert(hashedUrl,url):
 	print(test[1])"""
 	return(True)
 
-def main():
+@app.route("/", methods=["POST"])
+def convert():
 	'''Main function runs '''
-
-	#Checks if the number of arguments matches one
-	try:
-		url = sys.argv[1]
-	except IndexError:
-		print("Please Submit an argument in the form of a valid URL")
-		sys.exit(2)
-
-	if len(sys.argv) > 2:
-		print("Too many arguments submitted please submit an argument in the form of the direct link to the file")
-		sys.exit(2)
-
+	url = request.form.get('url')
 	hashedUrl = shorten(url)
 	switch = insert(hashedUrl, url)
-
+	
 	if switch:
 		print("Worked Yay")
+
+@app.route("/flights/<String:url>")
+def redirect(url):
+
+	cursor.execute('''SELECT baseUrl, hashedUrl FROM url WHERE hashedUrl = ?''', (url,))
+	test = cursor.fetchall()
+	if len(test) = 0:
+		print("Error")
+
+	return redirect(test[0], code=302)
 
 
 main()
