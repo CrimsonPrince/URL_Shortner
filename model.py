@@ -8,3 +8,8 @@ class Url(db.model):
 	hashedUrl = db.column(db.String, nullable = False)
 
 	def add_Url(self,baseUrl, inputHashed):
+		self.originalUrl = baseUrl
+		self.hashedUrl = inputHashed
+		self.id += 1
+
+	
