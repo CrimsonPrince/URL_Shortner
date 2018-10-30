@@ -1,13 +1,16 @@
 import hashlib
 import sys
-import SQLalchemy
+from flask_sqlalchemy import SQLAlchemy
+import * from model
+
+db = SQLAlchemy()
 
 def shorten(input):
 
 	hash = hashlib.md5(input.encode())
 	print(hash.hexdigest()[:8])
 
-	return(hash)
+	return(hash.hexdigest()[:8])
 
 def main():
 
@@ -24,7 +27,11 @@ def main():
 		print("Too many arguments submitted please submit an argument in the form of the direct link to the file")
 		sys.exit(2)
 
-	shortenurl = shorten(url)
+	hashedurl = shorten(url)
+
+def insert(hashed):
+
+
 
 
 if __name__ == '__main__':
