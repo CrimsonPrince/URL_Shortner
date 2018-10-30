@@ -2,8 +2,11 @@ import hashlib
 import sys
 import sqlite3
 
-db = sqlite3.connect('data/db')
-crusor = db.crusor()
+db = sqlite3.connect(':memory:')
+cursor = db.cursor()
+
+cursor.execute(''' CREATE TABLE url(id INTEGER PRIMARY KEY, baseUrl TEXT, hashedUrl TEXT)''')
+id = random(11000)
 
 def shorten(input):
 
@@ -28,13 +31,10 @@ def main():
 		sys.exit(2)
 
 	hashedUrl = shorten(url)
-	switch = insert(hashedUrl)
+	switch = insert(hashedUrl, url)
 
-def insert(hashed):
-
-
-
+def insert(hashedUrl,url):
+	crusor.execute('''INSERT INTO URL(id,baseUrl,hashedUrl) VALUES(?,?,?)''', (id,url, hashedUrl)
 
 
-if __name__ == '__main__':
-	main()
+main()
