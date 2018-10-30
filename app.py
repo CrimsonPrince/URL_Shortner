@@ -2,6 +2,10 @@ import hashlib
 import sys
 import sqlite3
 
+db = sqlite3.connect(':memory:')
+cursor = db.cursor()
+
+cursor.execute(''' CREATE TABLE url(id INTEGER PRIMARY KEY, baseUrl TEXT, hashedUrl TEXT)''')
 id = 10
 
 def shorten(input):
@@ -13,16 +17,14 @@ def shorten(input):
 
 def insert(hashedUrl,url):
 	cursor.execute('''INSERT INTO URL(id,baseUrl,hashedUrl) VALUES(?,?,?)''', (id,url, hashedUrl))
+	"""cursor.execute('''SELECT baseUrl, hashedUrl FROM url WHERE id = ?''', (id,))
+	test = cursor.fetchone()
+	print(test[0])
+	print(test[1])"""
 	return(True)
 
 def main():
 	'''Main function runs '''
-
-	db = sqlite3.connect(':memory:')
-	cursor = db.cursor()
-
-	cursor.execute(''' CREATE TABLE url(id INTEGER PRIMARY KEY, baseUrl TEXT, hashedUrl TEXT)''')
-
 
 	#Checks if the number of arguments matches one
 	try:
