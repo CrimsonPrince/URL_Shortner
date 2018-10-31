@@ -4,7 +4,7 @@ import sqlite3
 from flask import Flask, render_template, request
 
 app = Flask(__name__)
-db = sqlite3.connect(':memory:')
+db = sqlite3.connect(':memory:', check_same_thread=False)
 cursor = db.cursor()
 
 cursor.execute(''' CREATE TABLE url(id INTEGER PRIMARY KEY, baseUrl TEXT, hashedUrl TEXT)''')
@@ -31,19 +31,19 @@ def convert():
 	url = request.form.get('url')
 	hashedUrl = shorten(url)
 	switch = insert(hashedUrl, url)
-	
+	print(hashedUrl)
+
 	if switch:
 		print("Worked Yay")
+	return ('', 204)
 
-@app.route("/flights/<String:url>")
+@app.route("/<url>")
 def redirect(url):
 
 	cursor.execute('''SELECT baseUrl, hashedUrl FROM url WHERE hashedUrl = ?''', (url,))
 	test = cursor.fetchall()
-	if len(test) = 0:
+	if len(test) == 0:
 		print("Error")
+		return ('', 204)
 
-	return redirect(test[0], code=302)
-
-
-main()
+	return redirect('/you_were_redirected')

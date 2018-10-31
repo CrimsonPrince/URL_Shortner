@@ -1,3 +1,5 @@
-import sqlite3
+import requests
 
-print("Hello")
+form_data = {"url": "http://arthurcoll.com"}
+
+r = requests.post("http://127.0.0.1:5000", data = form_data)
