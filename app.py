@@ -1,7 +1,7 @@
 import hashlib
 import sys
 import sqlite3
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, url_for
 
 app = Flask(__name__)
 db = sqlite3.connect(':memory:', check_same_thread=False)
@@ -18,14 +18,18 @@ def shorten(input):
 	return(hash.hexdigest()[:8])
 
 def insert(hashedUrl,url):
-	cursor.execute('''INSERT INTO URL(id,baseUrl,hashedUrl) VALUES(?,?,?)''', (id,url, hashedUrl))
+	cursor.execute('''INSERT INTO URL(baseUrl,hashedUrl) VALUES(?,?)''', (url, hashedUrl))
 	"""cursor.execute('''SELECT baseUrl, hashedUrl FROM url WHERE id = ?''', (id,))
 	test = cursor.fetchone()
 	print(test[0])
 	print(test[1])"""
 	return(True)
 
-@app.route("/", methods=["POST"])
+@app.route('/index')
+def index():
+   return ('', 204)
+
+@app.route("/submit", methods=["POST"])
 def convert():
 	'''Main function runs '''
 	url = request.form.get('url')
@@ -39,11 +43,11 @@ def convert():
 
 @app.route("/<url>")
 def redirect(url):
-
-	cursor.execute('''SELECT baseUrl, hashedUrl FROM url WHERE hashedUrl = ?''', (url,))
+	cursor.execute('''SELECT baseUrl, hashedUrl FROM url''')
 	test = cursor.fetchall()
 	if len(test) == 0:
-		print("Error")
+		print("Not in DB")
+		print(test)
 		return ('', 204)
 
-	return redirect('/you_were_redirected')
+	return redirect(url_for('/index'))
