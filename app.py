@@ -1,7 +1,10 @@
 import hashlib
 import sys
 import sqlite3
-from flask import Flask, render_template, request, url_for, redirect
+from flask import Flask, render_template, request, url_for, redirect, send_from_directory, abort
+import os
+from urllib.parse import urlparse, urlsplit
+
 
 app = Flask(__name__)
 db = sqlite3.connect('db.sqlite', check_same_thread=False)
@@ -11,7 +14,12 @@ cursor = db.cursor()
 id = 10
 
 def shorten(input):
+	parse = urlsplit(input)
 
+	if parse.scheme == '':
+		input = 'http://' + input
+
+	print(input)
 	hash = hashlib.md5(input.encode())
 	print(hash.hexdigest()[:8])
 
@@ -24,17 +32,21 @@ def insert(hashedUrl,url):
 
 	return result
 
+@app.route('/favicon.ico')
+def favicon():
+    return send_from_directory(os.path.join(app.root_path, 'static'),
+                               'favicon.ico', mimetype='image/vnd.microsoft.icon')
+
 @app.route('/<string:url>')
 def serveUrl(url):
-	cursor.execute('''SELECT baseUrl, hashedUrl FROM url WHERE hashedUrl == ?''', (url,))
+	cursor.execute('''SELECT baseUrl, hashedUrl FROM url WHERE hashedUrl = ?''', (url,))
 	test = cursor.fetchone()
-	test2 = cursor.fetchall()
-	print(test2)
-	print(url)
-	if test is not None:
+	if test is None:
 		error = "This URL does not exist in our database"
 		return render_template("error.html", message=error)
-	return redirect(test[0])
+		#return abort(404)
+	print(test[0])
+	return redirect("http://" + test[0])
 
 @app.route('/')
 def index():
