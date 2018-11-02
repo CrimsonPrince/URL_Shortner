@@ -4,10 +4,10 @@ import sqlite3
 from flask import Flask, render_template, request, url_for
 
 app = Flask(__name__)
-db = sqlite3.connect(':memory:', check_same_thread=False)
+db = sqlite3.connect('db.sqlite', check_same_thread=False)
 cursor = db.cursor()
 
-cursor.execute(''' CREATE TABLE url(id INTEGER PRIMARY KEY, baseUrl TEXT, hashedUrl TEXT)''')
+#cursor.execute(''' CREATE TABLE url(id INTEGER PRIMARY KEY, baseUrl TEXT, hashedUrl TEXT)''')
 id = 10
 
 def shorten(input):
@@ -19,15 +19,16 @@ def shorten(input):
 
 def insert(hashedUrl,url):
 	cursor.execute('''INSERT INTO URL(baseUrl,hashedUrl) VALUES(?,?)''', (url, hashedUrl))
-	"""cursor.execute('''SELECT baseUrl, hashedUrl FROM url WHERE id = ?''', (id,))
-	test = cursor.fetchone()
-	print(test[0])
-	print(test[1])"""
-	return(True)
+	db.commit()
+	if len(result) == 0:
+		return render_template("error.html", message="Errror Inserting URL into DB")
 
-@app.route('/index')
+	message = "Your Shortened URL is" + hashedUrl
+	return render_template("success.html", message=message)
+
+@app.route('/')
 def index():
-   return ('', 204)
+   return render_template("index.html")
 
 @app.route("/submit", methods=["POST"])
 def convert():
@@ -35,11 +36,7 @@ def convert():
 	url = request.form.get('url')
 	hashedUrl = shorten(url)
 	switch = insert(hashedUrl, url)
-	print(hashedUrl)
 
-	if switch:
-		print("Worked Yay")
-	return ('', 204)
 
 @app.route("/<url>")
 def redirect(url):
@@ -49,5 +46,4 @@ def redirect(url):
 		print("Not in DB")
 		print(test)
 		return ('', 204)
-
-	return redirect(url_for('/index'))
+	return ('', 204)
