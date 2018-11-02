@@ -26,10 +26,12 @@ def insert(hashedUrl,url):
 
 @app.route('/<string:url>')
 def serveUrl(url):
-	cursor.execute('''SELECT baseUrl, hashedUrl FROM url''')
+	cursor.execute('''SELECT baseUrl, hashedUrl FROM url WHERE hashedUrl == ?''', (url,))
 	test = cursor.fetchone()
-	print(test)
-	if len(test) == 0:
+	test2 = cursor.fetchall()
+	print(test2)
+	print(url)
+	if test is not None:
 		error = "This URL does not exist in our database"
 		return render_template("error.html", message=error)
 	return redirect(test[0])

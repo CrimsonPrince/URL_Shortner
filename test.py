@@ -1,5 +1,10 @@
-import requests
+import sqlite3
+from pprint import pprint
 
-form_data = {"url": "http://arthurcoll.com"}
+db = sqlite3.connect('db.sqlite', check_same_thread=False)
+cursor = db.cursor()
 
-r = requests.post("http://127.0.0.1:5000/submit", data = form_data)
+cursor.execute("select * from url")
+results  = cursor.fetchall()
+
+pprint(results)
