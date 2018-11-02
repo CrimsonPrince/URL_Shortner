@@ -1,0 +1,30 @@
+@font-face {
+    font-family: custom;
+    src: url(strenuou.ttf);
+}
+
+body {
+    background-image: url("background.jpg");
+}
+
+h1 {
+	text-align: center;
+}
+
+form {
+	text-align: center;
+}
+
+p {
+	text-align:center;
+	color:white;
+}
+
+
+.vertical-center {
+  min-height: 100%;  /* Fallback for browsers do NOT support vh unit */
+  min-height: 100vh; /* These two lines are counted as one :-)       */
+
+  display: flex;
+  align-items: center;
+}

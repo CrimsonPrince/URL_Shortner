@@ -1,7 +1,7 @@
 import hashlib
 import sys
 import sqlite3
-from flask import Flask, render_template, request, url_for
+from flask import Flask, render_template, request, url_for, redirect
 
 app = Flask(__name__)
 db = sqlite3.connect('db.sqlite', check_same_thread=False)
@@ -19,12 +19,20 @@ def shorten(input):
 
 def insert(hashedUrl,url):
 	cursor.execute('''INSERT INTO URL(baseUrl,hashedUrl) VALUES(?,?)''', (url, hashedUrl))
+	result = cursor.fetchall()
 	db.commit()
-	if len(result) == 0:
-		return render_template("error.html", message="Errror Inserting URL into DB")
 
-	message = "Your Shortened URL is" + hashedUrl
-	return render_template("success.html", message=message)
+	return result
+
+@app.route('/<string:url>')
+def serveUrl(url):
+	cursor.execute('''SELECT baseUrl, hashedUrl FROM url''')
+	test = cursor.fetchone()
+	print(test)
+	if len(test) == 0:
+		error = "This URL does not exist in our database"
+		return render_template("error.html", message=error)
+	return redirect(test[0])
 
 @app.route('/')
 def index():
@@ -32,18 +40,10 @@ def index():
 
 @app.route("/submit", methods=["POST"])
 def convert():
-	'''Main function runs '''
+
 	url = request.form.get('url')
 	hashedUrl = shorten(url)
-	switch = insert(hashedUrl, url)
+	result = insert(hashedUrl, url)
 
 
-@app.route("/<url>")
-def redirect(url):
-	cursor.execute('''SELECT baseUrl, hashedUrl FROM url''')
-	test = cursor.fetchall()
-	if len(test) == 0:
-		print("Not in DB")
-		print(test)
-		return ('', 204)
-	return ('', 204)
+	return render_template("success.html", url=hashedUrl)
